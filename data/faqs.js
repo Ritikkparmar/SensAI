@@ -1,27 +1,32 @@
 export const faqs = [
   {
-    question: "How does the AI career guidance work?",
+    question: "What makes Sensai unique as a career development tool?",
     answer:
-      "Our AI analyzes your profile, skills, and career goals to provide personalized recommendations. It uses real-time industry data and proven career development frameworks to guide your professional growth.",
+      "Sensai combines AI-powered career tools with industry-specific insights to help you advance your career. Our platform offers three main features: an intelligent resume builder, a cover letter generator, and an adaptive interview preparation system. Each tool is tailored to your industry and skills, providing personalized guidance for your professional journey.",
   },
   {
-    question: "Is my data secure?",
+    question: "How does Sensai create tailored content?",
     answer:
-      "Yes, we take data security seriously. All your personal and professional information is encrypted and stored securely. We never share your data with third parties without your explicit consent.",
+      "Sensai learns about your industry, experience, and skills during onboarding. It then uses this information to generate customized resumes, cover letters, and interview questions. The content is specifically aligned with your professional background and industry standards, making it highly relevant and effective.",
   },
   {
-    question: "Can I cancel my subscription anytime?",
+    question: "How accurate and up-to-date are Sensai's industry insights?",
     answer:
-      "Absolutely! You can cancel your subscription at any time. We offer a hassle-free cancellation process, and you'll continue to have access to your plan until the end of your billing period.",
+      "We update our industry insights weekly using advanced AI analysis of current market trends. This includes salary data, in-demand skills, and industry growth patterns. Our system constantly evolves to ensure you have the most relevant information for your career decisions.",
   },
   {
-    question: "How accurate are the industry insights?",
+    question: "Is my data secure with Sensai?",
     answer:
-      "Our industry insights are drawn from real-time market data, trusted sources, and extensive analysis. We update our data weekly to ensure you have the most current information for your career decisions.",
+      "Absolutely. We prioritize the security of your professional information. All data is encrypted and securely stored using industry-standard practices. We use Clerk for authentication and never share your personal information with third parties.",
   },
   {
-    question: "Do you offer refunds?",
+    question: "How can I track my interview preparation progress?",
     answer:
-      "Yes, we offer a 30-day money-back guarantee if you're not satisfied with our service. No questions asked!",
+      "Sensai tracks your performance across multiple practice interviews, providing detailed analytics and improvement suggestions. You can view your progress over time, identify areas for improvement, and receive AI-generated tips to enhance your interview skills based on your responses.",
+  },
+  {
+    question: "Can I edit the AI-generated content?",
+    answer:
+      "Yes! While Sensai generates high-quality initial content, you have full control to edit and customize all generated resumes, cover letters, and other content. Our markdown editor makes it easy to refine the content to perfectly match your needs.",
   },
 ];
