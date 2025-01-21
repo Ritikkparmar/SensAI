@@ -3,10 +3,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  BrainCircuit,
-  Briefcase,
-  LineChart,
-  ScrollText,
   ArrowRight,
   Trophy,
   Target,
@@ -21,37 +17,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Image from "next/image";
+import { features } from "@/data/features";
+import { testimonial } from "@/data/testimonial";
+import { faqs } from "@/data/faqs";
 
 export default function LandingPage() {
-  const features = [
-    {
-      icon: <BrainCircuit className="w-10 h-10 mb-4 text-primary" />,
-      title: "AI-Powered Career Guidance",
-      description:
-        "Get personalized career advice and insights powered by advanced AI technology.",
-    },
-    {
-      icon: <Briefcase className="w-10 h-10 mb-4 text-primary" />,
-      title: "Interview Preparation",
-      description:
-        "Practice with role-specific questions and get instant feedback to improve your performance.",
-    },
-    {
-      icon: <LineChart className="w-10 h-10 mb-4 text-primary" />,
-      title: "Industry Insights",
-      description:
-        "Stay ahead with real-time industry trends, salary data, and market analysis.",
-    },
-    {
-      icon: <ScrollText className="w-10 h-10 mb-4 text-primary" />,
-      title: "Smart Resume Creation",
-      description:
-        "Generate ATS-optimized resumes and tailored cover letters with AI assistance.",
-    },
-  ];
-
   return (
     <>
+      <div className="grid-background"></div>
+
       {/* Hero Section */}
       <HeroSection />
 
@@ -166,32 +140,7 @@ export default function LandingPage() {
             What Our Users Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                quote:
-                  "The AI-powered interview prep was a game-changer. Landed my dream job at a top tech company!",
-                author: "Sarah Chen",
-                image: "https://randomuser.me/api/portraits/women/75.jpg",
-                role: "Software Engineer",
-                company: "Tech Giant Co.",
-              },
-              {
-                quote:
-                  "The industry insights helped me pivot my career successfully. The salary data was spot-on!",
-                author: "Michael Rodriguez",
-                image: "https://randomuser.me/api/portraits/men/75.jpg",
-                role: "Product Manager",
-                company: "StartUp Inc.",
-              },
-              {
-                quote:
-                  "My resume's ATS score improved significantly. Got more interviews in two weeks than in six months!",
-                author: "Priya Patel",
-                image: "https://randomuser.me/api/portraits/women/74.jpg",
-                role: "Marketing Director",
-                company: "Global Corp",
-              },
-            ].map((testimonial, index) => (
+            {testimonial.map((testimonial, index) => (
               <Card key={index} className="bg-background">
                 <CardContent className="pt-6">
                   <div className="flex flex-col space-y-4">
@@ -248,33 +197,7 @@ export default function LandingPage() {
 
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full">
-              {[
-                {
-                  question: "How does the AI career guidance work?",
-                  answer:
-                    "Our AI analyzes your profile, skills, and career goals to provide personalized recommendations. It uses real-time industry data and proven career development frameworks to guide your professional growth.",
-                },
-                {
-                  question: "Is my data secure?",
-                  answer:
-                    "Yes, we take data security seriously. All your personal and professional information is encrypted and stored securely. We never share your data with third parties without your explicit consent.",
-                },
-                {
-                  question: "Can I cancel my subscription anytime?",
-                  answer:
-                    "Absolutely! You can cancel your subscription at any time. We offer a hassle-free cancellation process, and you'll continue to have access to your plan until the end of your billing period.",
-                },
-                {
-                  question: "How accurate are the industry insights?",
-                  answer:
-                    "Our industry insights are drawn from real-time market data, trusted sources, and extensive analysis. We update our data weekly to ensure you have the most current information for your career decisions.",
-                },
-                {
-                  question: "Do you offer refunds?",
-                  answer:
-                    "Yes, we offer a 30-day money-back guarantee if you're not satisfied with our service. No questions asked!",
-                },
-              ].map((faq, index) => (
+              {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger className="text-left">
                     {faq.question}
@@ -298,7 +221,7 @@ export default function LandingPage() {
               Join thousands of professionals who are advancing their careers
               with AI-powered guidance.
             </p>
-            <Link href="/sign-up" passHref>
+            <Link href="/dashboard" passHref>
               <Button
                 size="lg"
                 variant="secondary"

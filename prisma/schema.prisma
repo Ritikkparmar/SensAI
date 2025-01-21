@@ -19,7 +19,6 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Profile fields
-  title         String?
   bio           String?
   experience    Int?      // Years of experience
   
@@ -27,18 +26,17 @@ model User {
   skills        String[]  // Array of skills
   assessments   Assessment[]
   resume        Resume?
-  coverLetter   CoverLetter?
+  coverLetter   CoverLetter[]
 }
 
 model Assessment {
   id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id])
-  question      String
-  answer        String    // Correct answer
-  userAnswer    String    // User's chosen answer
-  score         Float     // Score for this specific question
+  quizScore     Float     // Overall quiz score
+  questions     Json[]    // Array of {question, answer, userAnswer, isCorrect}
   category      String    // "Technical", "Behavioral", etc.
+  improvementTip String?  // AI-generated improvement tip
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -49,7 +47,7 @@ model Resume {
   id          String    @id @default(cuid())
   userId      String    @unique    // One resume per user
   user        User      @relation(fields: [userId], references: [id])
-  content     String    // Markdown content
+  content     String    @db.Text // Markdown content
   atsScore    Float?
   feedback    String?
   createdAt   DateTime  @default(now())
@@ -57,13 +55,18 @@ model Resume {
 }
 
 model CoverLetter {
-  id          String    @id @default(cuid())
-  userId      String    @unique    // One cover letter per user
-  user        User      @relation(fields: [userId], references: [id])
-  content     String    // Markdown content
-  jobDescription String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  content         String    // Markdown content
+  jobDescription  String?
+  companyName     String    // Name of the company applying to
+  jobTitle        String    // Position applying for
+  status          String    @default("draft") // draft, completed
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 // Combined Industry Trends and Salary Insights
