@@ -4,16 +4,17 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CoverLetterList from "./_components/cover-letter-list";
 
+
 export default async function CoverLetterPage() {
   const coverLetters = await getCoverLetters();
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold gradient-title">My Cover Letters</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-6xl font-bold gradient-title mr-3 mt-25">My Cover Letters</h1>
         <Link href="/ai-cover-letter/new">
           <Button>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-2 mt-30" />
             Create New
           </Button>
         </Link>

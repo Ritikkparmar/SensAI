@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import { checkUser } from "@/lib/checkUser";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -40,16 +40,23 @@ export async function getIndustryInsights() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
+  // Fetch the user and their industry insights
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
-    include: {
-      industryInsight: true,
-    },
+    include: { industryInsight: true },
   });
 
   if (!user) throw new Error("User not found");
 
-  // If no insights exist, generate them
+  // Check if the user is new (e.g., industry is not defined)
+  if (!user.industry) {
+    return {
+      message: "User industry is not defined. Please complete your profile.",
+      redirectToOnboarding: true, // Flag to indicate onboarding is required
+    };
+  }
+
+  // If no industry insights exist, generate them
   if (!user.industryInsight) {
     const insights = await generateAIInsights(user.industry);
 
@@ -57,12 +64,13 @@ export async function getIndustryInsights() {
       data: {
         industry: user.industry,
         ...insights,
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
       },
     });
 
     return industryInsight;
   }
 
+  // Return existing industry insights
   return user.industryInsight;
 }

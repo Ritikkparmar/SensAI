@@ -1,16 +1,23 @@
-import { getUserOnboardingStatus } from "@/actions/user";
-import React from "react";
+"use client";
 
-const MainLayout = async ({ children }) => {
-  const { isOnboarded } = await getUserOnboardingStatus();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-  // If not onboarded, redirect to onboarding page
-  // Skip this check if already on the onboarding page
-  if (!isOnboarded && !window.location.pathname.includes("/onboarding")) {
-    redirect("/onboarding");
-  }
+const MainLayout = ({ isOnboarded, children }) => {
+  const router = useRouter();
 
-  return <div className="container mx-auto mt-24 mb-20">{children}</div>;
+  useEffect(() => {
+    // Redirect to onboarding if the user is not onboarded
+    if (isOnboarded === false && !window.location.pathname.includes("/onboarding")) {
+      router.replace("/onboarding"); // Use replace to avoid adding to history stack
+    }
+  }, [isOnboarded, router]);
+
+  return (
+    <div className="pt-20 pb-10 px-5"> {/* Added padding to shift components downward */}
+      {children}
+    </div>
+  );
 };
 
 export default MainLayout;

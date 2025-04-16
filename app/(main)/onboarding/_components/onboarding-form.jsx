@@ -26,19 +26,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useFetch from "@/hooks/use-fetch";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
 
 const OnboardingForm = ({ industries }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
-
-  const {
-    loading: updateLoading,
-    fn: updateUserFn,
-    data: updateResult,
-  } = useFetch(updateUser);
 
   const {
     register,
@@ -56,22 +49,28 @@ const OnboardingForm = ({ industries }) => {
         .toLowerCase()
         .replace(/ /g, "-")}`;
 
-      await updateUserFn({
+      console.log("Submitting onboarding data:", {
         ...values,
         industry: formattedIndustry,
       });
+
+      const response = await updateUser({
+        ...values,
+        industry: formattedIndustry,
+      });
+
+      if (response.success) {
+        toast.success("Profile completed successfully!");
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        throw new Error("Failed to update profile");
+      }
     } catch (error) {
       console.error("Onboarding error:", error);
+      toast.error("Failed to complete onboarding. Please try again.");
     }
   };
-
-  useEffect(() => {
-    if (updateResult?.success && !updateLoading) {
-      toast.success("Profile completed successfully!");
-      router.push("/dashboard");
-      router.refresh();
-    }
-  }, [updateResult, updateLoading]);
 
   const watchIndustry = watch("industry");
 
@@ -89,6 +88,7 @@ const OnboardingForm = ({ industries }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Industry Selection */}
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
               <Select
@@ -97,7 +97,7 @@ const OnboardingForm = ({ industries }) => {
                   setSelectedIndustry(
                     industries.find((ind) => ind.id === value)
                   );
-                  setValue("subIndustry", "");
+                  setValue("subIndustry", ""); // Reset subIndustry when industry changes
                 }}
               >
                 <SelectTrigger id="industry">
@@ -121,6 +121,7 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
+            {/* Sub-Industry Selection */}
             {watchIndustry && (
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
@@ -149,6 +150,7 @@ const OnboardingForm = ({ industries }) => {
               </div>
             )}
 
+            {/* Experience Input */}
             <div className="space-y-2">
               <Label htmlFor="experience">Years of Experience</Label>
               <Input
@@ -166,6 +168,7 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
+            {/* Skills Input */}
             <div className="space-y-2">
               <Label htmlFor="skills">Skills</Label>
               <Input
@@ -181,6 +184,7 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
+            {/* Bio Input */}
             <div className="space-y-2">
               <Label htmlFor="bio">Professional Bio</Label>
               <Textarea
@@ -194,15 +198,9 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={updateLoading}>
-              {updateLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Complete Profile"
-              )}
+            {/* Submit Button */}
+            <Button type="submit" className="w-full" disabled={false}>
+              Complete Profile
             </Button>
           </form>
         </CardContent>
