@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌟 SensAI – AI Career Coach
 
-## Getting Started
+Your personalized AI-powered career mentor. SensAI helps job seekers advance their professional journey with features like career guidance, AI mock interviews, resume generation, industry insights, and more – all in one platform.
 
-First, run the development server:
+![Banner Screenshot](./fb844791-5113-4460-b716-82cd47d9ccce.png)
 
+---
+
+## 🔥 Tech Stack
+
+This full-stack application is built with cutting-edge technologies:
+
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS, Shadcn UI  
+- **Backend**: Prisma ORM, PostgreSQL (Neon DB), Inngest (Serverless workflows)  
+- **Authentication**: Clerk  
+- **AI Integration**: Mistral API, custom PromptRepo API and google Api  
+- **Deployment**: Vercel  
+
+---
+
+## 🎯 Key Features
+
+- ✅ **AI-Powered Resume & Cover Letter Generator**
+- ✅ **AI-Based Mock Interview with Evaluation**
+- ✅ **Personalized Industry Insights & Trends**
+- ✅ **Dynamic Role-based Salary Analytics**
+- ✅ **Growth Tools for Developers & Job Seekers**
+- ✅ **Clean and Modern UI with Dark Mode Support**
+- ✅ **Secure User Authentication & Onboarding**
+
+---
+
+## 📊 Industry Insights Dashboard
+
+Displays the current market outlook, industry growth rate, demand level, top skills, and salary trends by role.
+
+![Dashboard Screenshot](./a42c848a-fa00-4a3d-9a67-be75382e44ce.png)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
 ```bash
+git clone https://github.com/Ritikkparmar/SensAI.git
+cd SensAI
+2. Install dependencies
+bash
+Copy
+Edit
+npm install
+3. Setup environment variables
+Create a .env.local file with the following keys:
+
+env
+Copy
+Edit
+DATABASE_URL=your_neon_db_url
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+CLERK_SECRET_KEY=your_clerk_secret
+INGGEST_EVENT_KEY=your_inggest_key
+GOOGLE_API_KEY=your_google_api_key
+MISTRAL_API_KEY=your_mistral_api_key
+4. Run the app locally
+bash
+Copy
+Edit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+👨‍💻 Team Members
+Ritik Parmar – 22100BTCSE11728
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Raghav Laad – 22100BTCSE11708
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Rishabh Malviya – 22100BTCSE11724
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Rudra Sharma – 22100BTCSE11728
 
-## Learn More
+Rahul Chouhan – 22100BTCSE11728
 
-To learn more about Next.js, take a look at the following resources:
+📌 Project Highlights
+Built using modern full-stack architecture.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Clean, responsive, and accessible UI.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+AI features to enhance job-seeking productivity.
 
-## Deploy on Vercel
+Real-time, role-based salary analytics with interactive charts.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Google Sheets as a dynamic prompt repo for custom AI training.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📸 UI Sneak Peek
+🔍 Landing Page
+Engaging hero section with CTA to start your career growth journey.
+
+📊 Dashboard Page
+Visuals on industry trends, salaries, and high-demand skills.
+
+🛡️ License
+This project is licensed under the MIT License.
+
+Made with ❤️ by Team SensAI – Elevate your career with smart technology
