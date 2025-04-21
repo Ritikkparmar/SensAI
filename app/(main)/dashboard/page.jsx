@@ -6,8 +6,7 @@ import { redirect } from "next/navigation";
 export default async function DashboardPage() {
   const { isOnboarded } = await getUserOnboardingStatus();
 
-  // If not onboarded, redirect to onboarding page
-  // Skip this check if already on the onboarding page
+  // Redirect to onboarding page if the user is not onboarded
   if (!isOnboarded) {
     redirect("/onboarding");
   }
@@ -23,7 +22,6 @@ export default async function DashboardPage() {
       </div>
 
       <div className="container mx-auto">
-        
         <DashboardView insights={insights} />
       </div>
     </>

@@ -4,6 +4,7 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { checkUser } from "@/lib/checkUser";
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -28,49 +29,89 @@ export const generateAIInsights = async (industry) => {
           Include at least 5 skills and trends.
         `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
-  const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
 
-  return JSON.parse(cleanedText);
+    // Parse the JSON response
+    return JSON.parse(cleanedText);
+  } catch (error) {
+    console.error("Error generating AI insights:", error);
+    throw new Error("Failed to generate industry insights");
+  }
 };
 
 export async function getIndustryInsights() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  // Fetch the user and their industry insights
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-    include: { industryInsight: true },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  // Check if the user is new (e.g., industry is not defined)
-  if (!user.industry) {
-    return {
-      message: "User industry is not defined. Please complete your profile.",
-      redirectToOnboarding: true, // Flag to indicate onboarding is required
-    };
-  }
-
-  // If no industry insights exist, generate them
-  if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry);
-
-    const industryInsight = await db.industryInsight.create({
-      data: {
-        industry: user.industry,
-        ...insights,
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
-      },
+  try {
+    const { userId, emailAddress } = await auth();
+    console.log("Auth result:", { userId, emailAddress });
+    
+    if (!userId || !emailAddress) {
+      console.error("User is not authenticated or missing email.");
+      throw new Error("Unauthorized");
+    }
+    // Fetch the user and their industry insights
+    let user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+      include: { industryInsight: true },
     });
 
-    return industryInsight;
-  }
+    if (!user) {
+      console.log("User not found in the database. Creating a new user...");
+      const newUser = await db.user.create({
+        data: {
+          clerkUserId: userId,
+          email: emailAddress, // Ensure email is passed
+          industry: null, // Default value indicating not onboarded
+        },
+      });
+      console.log("New user created:", newUser);
+      user = newUser;
+    }
 
-  // Return existing industry insights
-  return user.industryInsight;
+    // Check if the user is new (e.g., industry is not defined)
+    if (!user.industry) {
+      console.log("User industry is not defined. Redirecting to onboarding...");
+      return {
+        success: false,
+        message: "User industry is not defined. Please complete your profile.",
+        redirectToOnboarding: true,
+      };
+    }
+
+    // If no industry insights exist, generate them
+    if (!user.industryInsight) {
+      console.log("Generating new industry insights for user...");
+      const insights = await generateAIInsights(user.industry);
+
+      const industryInsight = await db.industryInsight.create({
+        data: {
+          industry: user.industry,
+          ...insights,
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+        },
+      });
+
+      console.log("New industry insights created:", industryInsight);
+      return {
+        success: true,
+        data: industryInsight,
+      };
+    }
+
+    // Return existing industry insights
+    console.log("Returning existing industry insights for user...");
+    return {
+      success: true,
+      data: user.industryInsight,
+    };
+  } catch (error) {
+    console.error("Error in getIndustryInsights:", error);
+    return {
+      success: false,
+      message: "Failed to fetch industry insights",
+    };
+  }
 }
