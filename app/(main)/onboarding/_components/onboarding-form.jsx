@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
-
 const OnboardingForm = ({ industries }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
@@ -43,36 +42,46 @@ const OnboardingForm = ({ industries }) => {
     resolver: zodResolver(onboardingSchema),
   });
 
+  // Watch the "industry" field
+  const watchIndustry = watch("industry");
+
   const onSubmit = async (values) => {
     try {
+      // Format the industry and sub-industry
       const formattedIndustry = `${values.industry}-${values.subIndustry
         .toLowerCase()
         .replace(/ /g, "-")}`;
 
+      // Log the data being submitted
       console.log("Submitting onboarding data:", {
         ...values,
         industry: formattedIndustry,
       });
 
+      // Call the updateUser function with the formatted data
       const response = await updateUser({
         ...values,
         industry: formattedIndustry,
       });
 
-      if (response.success) {
+      // Check if the response indicates success
+      if (response?.success) {
         toast.success("Profile completed successfully!");
         router.push("/dashboard");
         router.refresh();
       } else {
-        throw new Error("Failed to update profile");
+        // Handle failure response
+        console.error("Failed to update profile. Response:", response);
+        throw new Error(response?.message || "Failed to update profile");
       }
     } catch (error) {
+      // Log the error and show a toast notification
       console.error("Onboarding error:", error);
-      toast.error("Failed to complete onboarding. Please try again.");
+      toast.error(
+        error.message || "Failed to complete onboarding. Please try again."
+      );
     }
   };
-
-  const watchIndustry = watch("industry");
 
   return (
     <div className="flex items-center justify-center bg-background">

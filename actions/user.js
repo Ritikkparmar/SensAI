@@ -13,50 +13,53 @@ export async function updateUser(data) {
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
   if (!user) throw new Error("User not found");
 
   try {
-    // Start a transaction to handle both user update and industry insights creation
-    const result = await db.$transaction(async (tx) => {
-      // Check if industry insights already exist
-      let industryInsight = await tx.industryInsight.findUnique({
-        where: {
-          industry: data.industry,
-        },
-      });
-
-      // If industry insights don't exist, generate and create them
-      if (!industryInsight) {
-        const insights = await generateAIInsights(data.industry);
-
-        industryInsight = await tx.industryInsight.create({
-          data: {
-            industry: data.industry,
-            ...insights,
-            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
-          },
-        });
-      }
-
-      // Update the user profile
-      const updatedUser = await tx.user.update({
-        where: { clerkUserId: userId },
-        data: {
-          industry: data.industry,
-          experience: data.experience,
-          bio: data.bio,
-          skills: data.skills.split(",").map((skill) => skill.trim()), // Split and trim skills
-        },
-      });
-
-      return { updatedUser, industryInsight };
+    // Step 1: Check if industry insights already exist
+    let industryInsight = await db.industryInsight.findUnique({
+      where: {
+        industry: data.industry,
+      },
     });
 
-    // Revalidate the cache for the dashboard or other relevant pages
+    // Step 2: Generate insights outside the transaction if not present
+    if (!industryInsight) {
+      const insights = await generateAIInsights(data.industry);
+
+      industryInsight = await db.industryInsight.create({
+        data: {
+          industry: data.industry,
+          ...insights,
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+        },
+      });
+    }
+
+    // Step 3: Update user profile
+    const updatedUser = await db.user.update({
+      where: { clerkUserId: userId },
+      data: {
+        industry: data.industry,
+        experience: data.experience,
+        bio: data.bio,
+        skills: Array.isArray(data.skills)
+          ? data.skills.map((skill) => skill.trim())
+          : String(data.skills || "")
+              .split(",")
+              .map((skill) => skill.trim())
+              .filter((s) => s.length > 0),
+      },
+    });
+    
+
     revalidatePath("/dashboard");
 
-    console.log("User and industry insights updated successfully:", result);
+    console.log("User and industry insights updated successfully:", {
+      updatedUser,
+      industryInsight,
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Error updating user and industry:", error.message);
@@ -71,7 +74,7 @@ export async function getUserOnboardingStatus() {
     throw new Error("Unauthorized");
   }
 
-  // Ensures user is created in DB if new
+  // Ensure user exists in DB
   await checkUser();
 
   const user = await db.user.findUnique({
